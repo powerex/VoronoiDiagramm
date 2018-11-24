@@ -1,7 +1,8 @@
 public class Beachline {
 
     public Arc createArc(Site site) {
-        return new Arc{mNil, mNil, mNil, site, null, null, null, mNil, mNil, Color.RED};
+//        return new Arc{mNil, mNil, mNil, site, null, null, null, mNil, mNil, Color.RED};
+        return new Arc();
     }
 
     public boolean isEmpty() {
@@ -187,186 +188,198 @@ public class Beachline {
 
     // Fixup functions
     private void insertFixup(Arc arc) {
-        while (z->parent->color == Arc::Color::RED)
+        while (arc.getParent().getColor() == Color.RED)
         {
-            if (z->parent == z->parent->parent->left)
+            if (arc.getParent() == arc.getParent().getParent().getLeft())
             {
-                Arc* y = z->parent->parent->right;
+                Arc y = arc.getParent().getParent().getRight();
                 // Case 1
-                if (y->color == Arc::Color::RED)
+                if (y.getColor() == Color.RED)
                 {
-                    z->parent->color = Arc::Color::BLACK;
-                    y->color = Arc::Color::BLACK;
-                    z->parent->parent->color = Arc::Color::RED;
-                    z = z->parent->parent;
+                    arc.getParent().setColor(Color.BLACK);
+                    y.setColor(Color.BLACK);
+                    arc.getParent().getParent().setColor(Color.RED);
+                    arc = arc.getParent().getParent();
                 }
                 else
                 {
                     // Case 2
-                    if (z == z->parent->right)
+                    if (arc == arc.getParent().getRight())
                     {
-                        z = z->parent;
-                        leftRotate(z);
+                        arc = arc.getParent();
+                        leftRotate(arc);
                     }
                     // Case 3
-                    z->parent->color = Arc::Color::BLACK;
-                    z->parent->parent->color = Arc::Color::RED;
-                    rightRotate(z->parent->parent);
+                    arc.getParent().setColor(Color.BLACK);
+                    arc.getParent().getParent().setColor(Color.RED);
+                    rightRotate(arc.getParent().getParent());
                 }
             }
             else
             {
-                Arc* y = z->parent->parent->left;
+                Arc y = arc.getParent().getParent().getLeft();
                 // Case 1
-                if (y->color == Arc::Color::RED)
+                if (y.getColor() == Color.RED)
                 {
-                    z->parent->color = Arc::Color::BLACK;
-                    y->color = Arc::Color::BLACK;
-                    z->parent->parent->color = Arc::Color::RED;
-                    z = z->parent->parent;
+                    arc.getParent().setColor(Color.BLACK);
+                    y.setColor(Color.BLACK);
+                    arc.getParent().getParent().setColor(Color.RED);
+                    arc = arc.getParent().getParent();
                 }
                 else
                 {
                     // Case 2
-                    if (z == z->parent->left)
+                    if (arc == arc.getParent().getLeft())
                     {
-                        z = z->parent;
-                        rightRotate(z);
+                        arc = arc.getParent();
+                        rightRotate(arc);
                     }
                     // Case 3
-                    z->parent->color = Arc::Color::BLACK;
-                    z->parent->parent->color = Arc::Color::RED;
-                    leftRotate(z->parent->parent);
+                    arc.getParent().setColor(Color.BLACK);
+                    arc.getParent().getParent().setColor(Color.RED);
+                    leftRotate(arc.getParent().getParent());
                 }
             }
         }
-        mRoot->color = Arc::Color::BLACK;
+        root.setColor(Color.BLACK);
     }
 
     private void removeFixup(Arc arc) {
-        while (x != mRoot && x->color == Arc::Color::BLACK)
+        while (arc != root && arc.getColor() == Color.BLACK)
         {
-            Arc* w;
-            if (x == x->parent->left)
+            Arc w;
+            if (arc == arc.getParent().getLeft())
             {
-                w = x->parent->right;
+                w = arc.getParent().getRight();
                 // Case 1
-                if (w->color == Arc::Color::RED)
+                if (w.getColor() == Color.RED)
                 {
-                    w->color = Arc::Color::BLACK;
-                    x->parent->color = Arc::Color::RED;
-                    leftRotate(x->parent);
-                    w = x->parent->right;
+                    w.setColor(Color.BLACK);
+                    arc.getParent().setColor(Color.RED);
+                    leftRotate(arc.getParent());
+                    w = arc.getParent().getRight();
                 }
                 // Case 2
-                if (w->left->color == Arc::Color::BLACK && w->right->color == Arc::Color::BLACK)
+                if (w.getLeft().getColor() == Color.BLACK && w.getRight().getColor() == Color.BLACK)
                 {
-                    w->color = Arc::Color::RED;
-                    x = x->parent;
+                    w.setColor(Color.RED);
+                    arc = arc.getParent();
                 }
                 else
                 {
                     // Case 3
-                    if (w->right->color == Arc::Color::BLACK)
+                    if (w.getRight().getColor() == Color.BLACK)
                     {
-                        w->left->color = Arc::Color::BLACK;
-                        w->color = Arc::Color::RED;
+                        w.getLeft().setColor(Color.BLACK);
+                        w.setColor(Color.RED);
                         rightRotate(w);
-                        w = x->parent->right;
+                        w = arc.getParent().getRight();
                     }
                     // Case 4
-                    w->color = x->parent->color;
-                    x->parent->color = Arc::Color::BLACK;
-                    w->right->color = Arc::Color::BLACK;
-                    leftRotate(x->parent);
-                    x = mRoot;
+                    w.setColor(arc.getParent().getColor());
+                    arc.getParent().setColor(Color.BLACK);
+                    w.getRight().setColor(Color.BLACK);
+                    leftRotate(arc.getParent());
+                    arc = root;
                 }
             }
             else
             {
-                w = x->parent->left;
+                w = arc.getParent().getLeft();
                 // Case 1
-                if (w->color == Arc::Color::RED)
+                if (w.getColor() == Color.RED)
                 {
-                    w->color = Arc::Color::BLACK;
-                    x->parent->color = Arc::Color::RED;
-                    rightRotate(x->parent);
-                    w = x->parent->left;
+                    w.setColor(Color.BLACK);
+                    arc.getParent().setColor(Color.RED);
+                    rightRotate(arc.getParent());
+                    w = arc.getParent().getLeft();
                 }
                 // Case 2
-                if (w->left->color == Arc::Color::BLACK && w->right->color == Arc::Color::BLACK)
+                if (w.getLeft().getColor() == Color.BLACK && w.getRight().getColor() == Color.BLACK)
                 {
-                    w->color = Arc::Color::RED;
-                    x = x->parent;
+                    w.setColor(Color.RED);
+                    arc = arc.getParent();
                 }
                 else
                 {
                     // Case 3
-                    if (w->left->color == Arc::Color::BLACK)
+                    if (w.getLeft().getColor() == Color.BLACK)
                     {
-                        w->right->color = Arc::Color::BLACK;
-                        w->color = Arc::Color::RED;
+                        w.getRight().setColor(Color.BLACK);
+                        w.setColor(Color.RED);
                         leftRotate(w);
-                        w = x->parent->left;
+                        w = arc.getParent().getLeft();
                     }
                     // Case 4
-                    w->color = x->parent->color;
-                    x->parent->color = Arc::Color::BLACK;
-                    w->left->color = Arc::Color::BLACK;
-                    rightRotate(x->parent);
-                    x = mRoot;
+                    w.setColor(arc.getParent().getColor());
+                    arc.getParent().setColor(Color.BLACK);
+                    w.getLeft().setColor(Color.BLACK);
+                    rightRotate(arc.getParent());
+                    arc = root;
                 }
             }
         }
-        x->color = Arc::Color::BLACK;
+        arc.setColor(Color.BLACK);
     }
 
     // Rotations
     private void leftRotate(Arc arc) {
-        Arc* y = x->right;
-        x->right = y->left;
-        if (!isNil(y->left))
-            y->left->parent = x;
-        y->parent = x->parent;
-        if (isNil(x->parent))
-            mRoot = y;
-        else if (x->parent->left == x)
-            x->parent->left = y;
+        Arc tmp = arc.getRight();
+        arc.setRight(tmp.getLeft());
+        if (!isNil(tmp.getLeft()))
+            tmp.getLeft().setParent(arc);
+        tmp.setParent(arc.getParent());
+        if (isNil(arc.getParent()))
+            root = tmp;
+        else if (arc.getParent().getLeft() == arc)
+            arc.getParent().setLeft(tmp);
         else
-            x->parent->right = y;
-        y->left = x;
-        x->parent = y;
+            arc.getParent().setRight(tmp);
+        tmp.setLeft(arc);
+        arc.setParent(tmp);
     }
 
     private void rightRotate(Arc arc) {
-        Arc* x = y->left;
-        y->left = x->right;
-        if (!isNil(x->right))
-            x->right->parent = y;
-        x->parent = y->parent;
-        if (isNil(y->parent))
-            mRoot = x;
-        else if (y->parent->left == y)
-            y->parent->left = x;
+        Arc tmp = arc.getLeft();
+        arc.setLeft(tmp.getRight());
+        if (!isNil(tmp.getRight()))
+            tmp.getRight().setParent(arc);
+        tmp.setParent(arc.getParent());
+        if (isNil(arc.getParent()))
+            root = tmp;
+        else if (arc.getParent().getLeft() == arc)
+            arc.getParent().setLeft(tmp);
         else
-            y->parent->right = x;
-        x->right = y;
-        y->parent = x;
+            arc.getParent().setRight(tmp);
+        tmp.setRight(arc);
+        arc.setParent(tmp);
     }
 
     private double computeBreakpoint(Vector2 point1, Vector2 point2, double l) {
-        double x1 = point1.x, y1 = point1.y, x2 = point2.x, y2 = point2.y;
+        double x1 = point1.getX(), y1 = point1.getY(), x2 = point2.getX(), y2 = point2.getY();
         double d1 = 1.0 / (2.0 * (y1 - l));
         double d2 = 1.0 / (2.0 * (y2 - l));
         double a = d1 - d2;
         double b = 2.0 * (x2 * d2 - x1 * d1);
         double c = (y1 * y1 + x1 * x1 - l * l) * d1 - (y2 * y2 + x2 * x2 - l * l) * d2;
         double delta = b * b - 4.0 * a * c;
-        return (-b + std::sqrt(delta)) / (2.0 * a);
+        return (-b + Math.sqrt(delta)) / (2.0 * a);
     }
 
     private void free(Arc arc) {
 
+    }
+
+    public String getStringArc(Arc arc, String tabs) {
+        StringBuilder sb = new StringBuilder();
+        sb.append(tabs).append(arc.getSite().getIndex()).append(' ').append(arc.leftHalfEdge).append(' ').append(arc.rightHalfEdge).append('\n');
+        if (!isNil(arc.getLeft())) {
+            sb.append(getStringArc(arc.getLeft(), tabs+'\t'));
+        }
+        if (!isNil(arc.getRight())) {
+            sb.append(getStringArc(arc.getRight(), tabs+'\t'));
+        }
+        return sb.toString();
     }
 
     /*std::ostream& printArc(std::ostream& os, const Arc* arc, std::string tabs = "") const;
